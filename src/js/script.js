@@ -11,6 +11,13 @@ const templates = {
   bookTemplate: Handlebars.compile(document.querySelector(select.templateOf.books).innerHTML),
 };
 
+const ratings = {
+  below6: 'linear-gradient(to bottom, #fefcea 0%, #f1da36 100%);',
+  sixtoeight: 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%);',
+  eighttonine: 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%);',
+  above9: 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%);',
+};
+
 console.log(dataSource.books);
 
 function bookPrint(){
@@ -18,12 +25,37 @@ function bookPrint(){
   const bookContainer = document.querySelector(select.booksList);
 
   for (let book of bookList){
-
+    const ratingWidth = book.rating * 10;
+    book.ratingWidth = ratingWidth;
+    //console.log('book rating: ', bookRating);
+    //let filteredBook = document.querySelector('.book__image[data-id="'+book.id+'"]');
+    const ratingBgc = determineRatingBgc(book.rating);
+    book.ratingBgc = ratingBgc;
+    console.log('ksiazka po dodaniu rzeczy, czy dziala?? ', book);
     const generatedHTML = templates.bookTemplate(book);
     book = utils.createDOMFromHTML(generatedHTML);
     bookContainer.appendChild(book);
   }
 }
+
+function determineRatingBgc(rating) {
+  let background = '';
+
+  if (rating < 6) {
+    background = ratings.below6;
+  }
+  else if (rating > 6 && rating <= 8) {
+    background = ratings.sixtoeight;
+  }
+  else if (rating > 8 && rating <= 9) {
+    background = ratings.eighttonine;
+  }
+  else if (rating > 9) {
+    background = ratings.above9;
+  }
+  return background;
+}
+
 
 function initActions() {
   const favoriteBooks = [];

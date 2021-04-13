@@ -81,26 +81,20 @@ class BooksList {
 
       if(imageWrapper.classList.contains('book__image')){
         imageWrapper.classList.toggle('favorite');
-        //console.log('tablica favoriteBooks przed dodaniem czegokolwiek: ',favoriteBooks);
 
         if (favoriteBooks.indexOf(imageId) == -1) {
           favoriteBooks.push(imageId);
-          //console.log('dodano do tablicy');
         }
         else {
           const bookIndex = favoriteBooks.indexOf(imageId);
           favoriteBooks.splice(bookIndex,1);
-          //console.log('usunieto z tablicy');
         }
-        //console.log('imageId klikniete obrazka: ', imageId);
-        //console.log('cala tablica po dodaniu: ', favoriteBooks);
       }
     });
 
     // obsluga filtrow
     const filters = [];
     thisBookList.filterContainer.addEventListener('click', function(event){
-      event.preventDefault();
       thisBookList.filterElements(event, filters);
     });
   }
@@ -108,39 +102,35 @@ class BooksList {
   filterElements(event, filtersArr){
     const thisBookList = this;
     const input = event.target;
-    //console.log('tablica filters przed dodaniem: ', filtersArr);
     if (input.type == 'checkbox' && input.name == 'filter' && input.tagName == 'INPUT') {
       if (input.checked && filtersArr.indexOf(input.value) == -1) {
         filtersArr.push(input.value);
-        //console.log('dodano do tablicy');
       }
       else {
         const inputIndex = filtersArr.indexOf(input.value);
         filtersArr.splice(inputIndex,1);
-        //console.log('usunieto z tablicy');
       }
     }
-    //console.log('tablica filters PO dodaniu: ', filtersArr);
     thisBookList.filterBooks(filtersArr);
   }
 
   filterBooks(filtersArr){
     const thisBookList = this;
+
     for (let book of thisBookList.bookList){
-      // hmm do czego w koncu ta zmienna?
-      const shouldBeHidden = false; // eslint-disable-line no-unused-vars
-      //console.log('book: ', book);
+      let filteredBook = document.querySelector('.book__image[data-id="'+book.id+'"]');
+      book.shouldBeHidden = false;
       for (let filter of filtersArr){
 
         if (!book.details[filter]) {
-          console.log('dana ksiazka NIE JEST w filtrach', book);
-          const filteredBook = document.querySelector('.book__image[data-id="'+book.id+'"]');
-          console.log(filteredBook);
-          filteredBook.classList.toggle('hidden');
+          book.shouldBeHidden = true;
+          break;
         }
       }
+      if (book.shouldBeHidden) filteredBook.classList.add('hidden');
+      else filteredBook.classList.remove('hidden');
     }
   }
 }
-// jak poradzic sobie z errorem od eslint o nieuzywanej stalej?
+
 const app = new BooksList(); // eslint-disable-line no-unused-vars

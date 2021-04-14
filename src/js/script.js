@@ -31,6 +31,8 @@ class BooksList {
     thisBookList.bookContainer = document.querySelector(select.booksList);
     thisBookList.filterContainer = document.querySelector(select.filters);
     thisBookList.bookList = dataSource.books;
+    thisBookList.filtersArr = [];
+    thisBookList.favoriteBooks = [];
   }
 
   bookPrint(){
@@ -69,25 +71,10 @@ class BooksList {
 
   initActions() {
     const thisBookList = this;
-    const favoriteBooks = [];
 
     // obsluga obrazka i tablicy ulubionych ksiazek
     thisBookList.bookContainer.addEventListener('dblclick', function(event){
-      //czy to co ponizej nie lepiej jakby bylo w osobnej funkcji?
-      const imageWrapper = event.target.offsetParent;
-      const imageId = imageWrapper.getAttribute('data-id');
-
-      if(imageWrapper.classList.contains('book__image')){
-        imageWrapper.classList.toggle('favorite');
-
-        if (favoriteBooks.indexOf(imageId) == -1) {
-          favoriteBooks.push(imageId);
-        }
-        else {
-          const bookIndex = favoriteBooks.indexOf(imageId);
-          favoriteBooks.splice(bookIndex,1);
-        }
-      }
+      thisBookList.toggleFavourite();
     });
 
     // obsluga filtrow
@@ -96,49 +83,57 @@ class BooksList {
     });
   }
 
+toggleFavourite(){
+
+  const imageWrapper = event.target.offsetParent;
+  const imageId = imageWrapper.getAttribute('data-id');
+
+  if(imageWrapper.classList.contains('book__image')){
+    imageWrapper.classList.toggle('favorite');
+    if (thisBookList.favoriteBooks.indexOf(imageId) == -1) {
+      thisBookList.favoriteBooks.push(imageId);
+    }
+    else {
+      const bookIndex = thisBookList.favoriteBooks.indexOf(imageId);
+      thisBookList.favoriteBooks.splice(bookIndex,1);
+    }
+  }
+}
+
+
   filterElements(event){
-    const filtersArr = [];
     const thisBookList = this;
     const input = event.target;
+
     if (input.type == 'checkbox' && input.name == 'filter' && input.tagName == 'INPUT') {
-      if (input.checked && filtersArr.indexOf(input.value) == -1) {
-        filtersArr.push(input.value);
+      if (input.checked && thisBookList.filtersArr.indexOf(input.value) == -1) {
+        thisBookList.filtersArr.push(input.value);
       }
       else {
-        const inputIndex = filtersArr.indexOf(input.value);
-        filtersArr.splice(inputIndex,1);
+        const inputIndex = thisBookList.filtersArr.indexOf(input.value);
+        thisBookList.filtersArr.splice(inputIndex,1);
       }
     }
-    thisBookList.filterBooks(filtersArr);
+    thisBookList.filterBooks();
   }
 
-  filterBooks(filtersArr){
+  filterBooks(){
     const thisBookList = this;
 
     for (let book of thisBookList.bookList){
       let filteredBook = document.querySelector('.book__image[data-id="'+book.id+'"]');
       book.shouldBeHidden = false;
-
-      if(filtersArr.length) {
+      if(thisBookList.filtersArr.length) {
         book.shouldBeHidden = true;
         for(const detail in book.details) {
-          if(book.details[detail] && filtersArr.includes(detail)) {
-             book.shouldBeHidden = false;
-             break;
+          if(book.details[detail] && thisBookList.filtersArr.includes(detail)) {
+            book.shouldBeHidden = false;
+            break;
           }
         }
       }
-
-      /*
-      for (let filter of filtersArr){
-
-        if (!book.details[filter]) {
-          book.shouldBeHidden = true;
-          break;
-        }
-      }
       if (book.shouldBeHidden) filteredBook.classList.add('hidden');
-      else filteredBook.classList.remove('hidden');*/
+      else filteredBook.classList.remove('hidden');
     }
   }
 }

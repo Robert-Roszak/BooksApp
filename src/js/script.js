@@ -73,8 +73,6 @@ class BooksList {
 
     // obsluga obrazka i tablicy ulubionych ksiazek
     thisBookList.bookContainer.addEventListener('dblclick', function(event){
-      //prevent.Default nie dziala? jak to?
-      event.preventDefault();
       //czy to co ponizej nie lepiej jakby bylo w osobnej funkcji?
       const imageWrapper = event.target.offsetParent;
       const imageId = imageWrapper.getAttribute('data-id');
@@ -93,13 +91,13 @@ class BooksList {
     });
 
     // obsluga filtrow
-    const filters = [];
     thisBookList.filterContainer.addEventListener('click', function(event){
-      thisBookList.filterElements(event, filters);
+      thisBookList.filterElements(event);
     });
   }
 
-  filterElements(event, filtersArr){
+  filterElements(event){
+    const filtersArr = [];
     const thisBookList = this;
     const input = event.target;
     if (input.type == 'checkbox' && input.name == 'filter' && input.tagName == 'INPUT') {
@@ -120,6 +118,18 @@ class BooksList {
     for (let book of thisBookList.bookList){
       let filteredBook = document.querySelector('.book__image[data-id="'+book.id+'"]');
       book.shouldBeHidden = false;
+
+      if(filtersArr.length) {
+        book.shouldBeHidden = true;
+        for(const detail in book.details) {
+          if(book.details[detail] && filtersArr.includes(detail)) {
+             book.shouldBeHidden = false;
+             break;
+          }
+        }
+      }
+
+      /*
       for (let filter of filtersArr){
 
         if (!book.details[filter]) {
@@ -128,7 +138,7 @@ class BooksList {
         }
       }
       if (book.shouldBeHidden) filteredBook.classList.add('hidden');
-      else filteredBook.classList.remove('hidden');
+      else filteredBook.classList.remove('hidden');*/
     }
   }
 }

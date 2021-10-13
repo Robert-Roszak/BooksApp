@@ -73,7 +73,7 @@ class BooksList {
     const thisBookList = this;
 
     // obsluga obrazka i tablicy ulubionych ksiazek
-    thisBookList.bookContainer.addEventListener('dblclick', function(event){
+    thisBookList.bookContainer.addEventListener('dblclick', function(){
       thisBookList.toggleFavourite();
     });
 
@@ -83,22 +83,23 @@ class BooksList {
     });
   }
 
-toggleFavourite(){
+  toggleFavourite() {
+    const thisBookList = this;
 
-  const imageWrapper = event.target.offsetParent;
-  const imageId = imageWrapper.getAttribute('data-id');
+    const imageWrapper = event.target.offsetParent;
+    const imageId = imageWrapper.getAttribute('data-id');
 
-  if(imageWrapper.classList.contains('book__image')){
-    imageWrapper.classList.toggle('favorite');
-    if (thisBookList.favoriteBooks.indexOf(imageId) == -1) {
-      thisBookList.favoriteBooks.push(imageId);
-    }
-    else {
-      const bookIndex = thisBookList.favoriteBooks.indexOf(imageId);
-      thisBookList.favoriteBooks.splice(bookIndex,1);
+    if(imageWrapper.classList.contains('book__image')){
+      imageWrapper.classList.toggle('favorite');
+      if (thisBookList.favoriteBooks.indexOf(imageId) == -1) {
+        thisBookList.favoriteBooks.push(imageId);
+      }
+      else {
+        const bookIndex = thisBookList.favoriteBooks.indexOf(imageId);
+        thisBookList.favoriteBooks.splice(bookIndex,1);
+      }
     }
   }
-}
 
 
   filterElements(event){
